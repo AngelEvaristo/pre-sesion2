@@ -55,20 +55,37 @@ jobs:
           curl http://localhost:8081/weatherForecast
 
 #ECR
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, Tag, and Push the Image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sesion2tecylabjava
-          IMAGE_TAG: ${{ needs.extract-version.outputs.app_version }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      # - name: Build, Tag, and Push the Image to Amazon ECR
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: sesion2tecylabjava
+      #     IMAGE_TAG: ${{ needs.extract-version.outputs.app_version }}
+      #   run: |
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 #ACR
+      - name: Configure ACR credentials
+        uses: azure/docker-login@v2
+        with:
+          login-server: testsesion2.azurecr.io # default: index.docker.io
+          username: ${{ secrets.AZURE_ACR_ACCESS_USER }}
+          password: ${{ secrets.AZURE_ACR_ACCESS_PASS }}  
+
+      - name: Build & Push image
+        env:
+          ACR_REGISTRY: testsesion2.azurecr.io
+          ACR_REPOSITORY: minimalapi
+          IMAGE_TAG: ${{ needs.extract-version.outputs.app_version }}      
+        run: |
+          echo -e "\e[32mBuild componente\e[0m"
+          docker build -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG .
+          # echo -e "\e[32mPush componente\e[0m"
+          # docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
 
 #GCR
