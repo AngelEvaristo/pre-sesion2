@@ -106,9 +106,9 @@ jobs:
         run: |
           echo -e "\e[32mBuild componente\e[0m"
           docker build -t $AR_REGISTRY/$AR_REPOSITORY:$IMAGE_TAG .                  
-          docker tag $AR_REGISTRY/$AR_REPOSITORY:$IMAGE_TAG us-east1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$IMAGE_TAG
+          docker tag $AR_REGISTRY/$AR_REPOSITORY:$IMAGE_TAG us-east1-docker.pkg.dev/$PROJECT_ID/testtecylab/$IMAGE_NAME:$IMAGE_TAG
           docker images
-          docker push us-east1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$IMAGE_TAG
+          docker push us-east1-docker.pkg.dev/$PROJECT_ID/testtecylab/$IMAGE_NAME:$IMAGE_TAG
           docker images
 
    
