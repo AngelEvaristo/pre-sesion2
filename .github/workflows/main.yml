@@ -90,11 +90,9 @@ jobs:
       #     docker images
 
 #GCR
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: 'google-github-actions/auth@v3'
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: credenciales-364703
-          export_default_credentials: true
+          credentials_json: '${{ secrets.GCP_SA_KEY }}' # Replace with the name of your GitHub Actions secret
 
       - name: Push Docker Image to Artifact Registry
         env:
