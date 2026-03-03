@@ -70,23 +70,42 @@ jobs:
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 #ACR
-      - name: Configure ACR credentials
-        uses: azure/docker-login@v2
-        with:
-          login-server: testsesion2.azurecr.io # default: index.docker.io
-          username: ${{ secrets.AZURE_ACR_ACCESS_USER }}
-          password: ${{ secrets.AZURE_ACR_ACCESS_PASS }}  
+      # - name: Configure ACR credentials
+      #   uses: azure/docker-login@v2
+      #   with:
+      #     login-server: testsesion2.azurecr.io # default: index.docker.io
+      #     username: ${{ secrets.AZURE_ACR_ACCESS_USER }}
+      #     password: ${{ secrets.AZURE_ACR_ACCESS_PASS }}  
 
-      - name: Build & Push image
-        env:
-          ACR_REGISTRY: testsesion2.azurecr.io
-          ACR_REPOSITORY: minimalapi
-          IMAGE_TAG: ${{ needs.extract-version.outputs.app_version }}      
-        run: |
-          echo -e "\e[32mBuild componente\e[0m"
-          docker build -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG .
-          echo -e "\e[32mPush componente\e[0m"
-          docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
-          docker images
+      # - name: Build & Push image
+      #   env:
+      #     ACR_REGISTRY: testsesion2.azurecr.io
+      #     ACR_REPOSITORY: minimalapi
+      #     IMAGE_TAG: ${{ needs.extract-version.outputs.app_version }}      
+      #   run: |
+      #     echo -e "\e[32mBuild componente\e[0m"
+      #     docker build -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG .
+      #     echo -e "\e[32mPush componente\e[0m"
+      #     docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
+      #     docker images
 
 #GCR
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: credenciales-364703
+          export_default_credentials: true
+
+      - name: Push Docker Image to Artifact Registry
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+          PROJECT_ID: credenciales-364703
+          IMAGE_NAME: sesion2tecylabjava
+        run: |
+          echo -e "\e[32mBuild componente\e[0m"
+          docker build -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG .                  
+          docker tag $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG  us-east1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$IMAGE_TAG
+          docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$IMAGE_TAG
+          docker images
+
+   
