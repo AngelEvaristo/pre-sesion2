@@ -95,14 +95,16 @@ jobs:
           credentials_json: '${{ secrets.GCP_SA_KEY }}' # Replace with the name of your GitHub Actions secret
 
       - name: Push Docker Image to Artifact Registry
-        env:
-          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        env:          
+          AR_REGISTRY: us-east1-docker.pkg.dev
+          AR_REPOSITORY: sesion2tecylabjava
           PROJECT_ID: credenciales-364703
           IMAGE_NAME: sesion2tecylabjava
+          IMAGE_TAG: ${{ needs.extract-version.outputs.app_version }} 
         run: |
           echo -e "\e[32mBuild componente\e[0m"
-          docker build -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG .                  
-          docker tag $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG  us-east1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$IMAGE_TAG
+          docker build -t $AR_REGISTRY/$AR_REPOSITORY:$IMAGE_TAG .                  
+          docker tag $AR_REGISTRY/$AR_REPOSITORY:$IMAGE_TAG  us-east1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$IMAGE_TAG
           docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$IMAGE_TAG
           docker images
 
