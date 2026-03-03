@@ -87,5 +87,6 @@ jobs:
           docker build -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG .
           echo -e "\e[32mPush componente\e[0m"
           docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
+          docker images
 
 #GCR
