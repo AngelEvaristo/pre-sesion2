@@ -93,7 +93,9 @@ jobs:
       - uses: 'google-github-actions/auth@v3'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}' # Replace with the name of your GitHub Actions secret
-
+      - name: Configure Docker Client
+        run: |
+          gcloud auth configure-docker us-east1-docker.pkg.dev --quiet
       - name: Push Docker Image to Artifact Registry
         env:          
           AR_REGISTRY: us-east1-docker.pkg.dev
